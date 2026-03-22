@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
+import 'faq_help.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -145,7 +146,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text('Help & FAQ', style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
                       trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const HelpFAQScreen()));
+                      },
                     ),
                     const Divider(height: 1, indent: 60, endIndent: 20, color: Colors.grey),
                     ListTile(

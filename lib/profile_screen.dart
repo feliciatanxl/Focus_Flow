@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // To listen to Dark Mode!
 import 'theme_provider.dart';            // Your app's brain
 import 'login_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -91,7 +92,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     // Quick Edit Button
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isDark ? Colors.blueAccent.withOpacity(0.2) : Colors.blue[50],
                         foregroundColor: Colors.blueAccent,

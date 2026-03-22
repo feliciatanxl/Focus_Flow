@@ -6,7 +6,6 @@ import 'login_screen.dart';
 
 void main() {
   runApp(
-    // 1. Wrap your entire app in the Provider so Dark Mode works everywhere
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
       child: const FocusFlowApp(),
@@ -14,7 +13,6 @@ void main() {
   );
 }
 
-// 2. THE APP SETUP (Now listening to the ThemeProvider!)
 class FocusFlowApp extends StatelessWidget {
   const FocusFlowApp({super.key});
 
@@ -24,39 +22,33 @@ class FocusFlowApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-
-            // --- LIGHT AND DARK THEME SETTINGS ---
             themeMode: themeProvider.themeMode,
+            // Premium Light Theme
             theme: ThemeData(
+              useMaterial3: true,
               brightness: Brightness.light,
               scaffoldBackgroundColor: const Color(0xFFF4F6F9),
               primaryColor: Colors.blueAccent,
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.black87,
-                elevation: 0,
-              ),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
             ),
+            // Deep Dark Theme
             darkTheme: ThemeData(
+              useMaterial3: true,
               brightness: Brightness.dark,
               scaffoldBackgroundColor: const Color(0xFF121212),
               primaryColor: Colors.blueAccent,
               cardColor: const Color(0xFF1E1E1E),
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                elevation: 0,
-              ),
             ),
-
-            home: const SplashScreen(), // Keeps your awesome Splash Screen!
+            home: const SplashScreen(),
           );
         }
     );
   }
 }
 
-// 3. THE SPLASH SCREEN
+// -------------------------------------------------------------------------
+// 3. THE SPLASH SCREEN (Fixed for White BG Logo)
+// -------------------------------------------------------------------------
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -69,9 +61,16 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       );
     });
   }
@@ -79,19 +78,33 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Notice I removed 'backgroundColor: Colors.white' so it adapts to Dark Mode!
+      // We keep this white so your White-BG JSON logo blends perfectly!
+      backgroundColor: Colors.white,
       body: Center(
-        child: Lottie.asset(
-          'assets/SplashLogo.json',
-          width: 300,
-          height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/SplashLogo.json',
+              width: 250,
+              height: 250,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+              strokeWidth: 3,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// 4. THE ONBOARDING TUTORIAL
+// -------------------------------------------------------------------------
+// 4. THE ONBOARDING TUTORIAL (Redesigned with Indicators)
+// -------------------------------------------------------------------------
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -105,59 +118,99 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      // Removed hardcoded white background here too!
       body: SafeArea(
         child: Column(
           children: [
+            // Skip Button at the top
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextButton(
+                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
+                  child: Text('Skip', style: TextStyle(color: isDark ? Colors.grey : Colors.grey[600], fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+
             Expanded(
               child: PageView(
                 controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
+                onPageChanged: (index) => setState(() => _currentPage = index),
                 children: const [
-                  OnboardingPage(icon: Icons.check_circle_outline, title: 'Welcome to FocusFlow', description: 'The easiest way to organize your daily tasks.'),
-                  OnboardingPage(icon: Icons.timer_outlined, title: 'Stay on Track', description: 'Build healthy habits and never miss a deadline.'),
-                  OnboardingPage(icon: Icons.rocket_launch_outlined, title: 'Achieve Your Goals', description: 'Ready to boost your productivity? Let\'s go!'),
+                  OnboardingPage(
+                      icon: Icons.auto_awesome_rounded,
+                      title: 'Welcome to FocusFlow',
+                      description: 'Your centralized hub for academic success and daily organization.'
+                  ),
+                  OnboardingPage(
+                      icon: Icons.timer_rounded,
+                      title: 'Smart Focus Mode',
+                      description: 'Use the course-specific Pomodoro timer to maximize your study sessions.'
+                  ),
+                  OnboardingPage(
+                      icon: Icons.rocket_launch_rounded,
+                      title: 'Achieve More',
+                      description: 'Track your streaks, complete tasks, and build the future you want.'
+                  ),
                 ],
               ),
             ),
+
+            // Dot Indicator
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (index) => _buildDot(index, context)),
+            ),
+
+            const SizedBox(height: 40),
+
+            // Main Action Button
             Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _currentPage == 2
-                      ? const SizedBox(width: 60)
-                      : TextButton(
-                    onPressed: () => _pageController.jumpToPage(2),
-                    child: const Text('Skip', style: TextStyle(color: Colors.grey)),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    elevation: 0,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      if (_currentPage == 2) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
-                      } else {
-                        _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
-                      }
-                    },
-                    child: Text(_currentPage == 2 ? 'Get Started' : 'Next'),
+                  onPressed: () {
+                    if (_currentPage == 2) {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    } else {
+                      _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeOutCubic);
+                    }
+                  },
+                  child: Text(
+                      _currentPage == 2 ? 'Get Started' : 'Next',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                   ),
-                ],
+                ),
               ),
-            )
+            ),
+            const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDot(int index, BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: 10,
+      width: _currentPage == index ? 30 : 10,
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: _currentPage == index ? Colors.blueAccent : Colors.grey.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
@@ -172,21 +225,39 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 100, color: Colors.blueAccent),
-          const SizedBox(height: 40),
+          // Icon Container
+          Container(
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 100, color: Colors.blueAccent),
+          ),
+          const SizedBox(height: 60),
           Text(
               title,
-              // Removed hardcoded black text so it turns white in dark mode
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black87,
+                  letterSpacing: -1
+              ),
               textAlign: TextAlign.center
           ),
           const SizedBox(height: 20),
-          Text(description, style: const TextStyle(fontSize: 16, color: Colors.grey), textAlign: TextAlign.center),
+          Text(
+              description,
+              style: const TextStyle(fontSize: 16, color: Colors.grey, height: 1.5),
+              textAlign: TextAlign.center
+          ),
         ],
       ),
     );
