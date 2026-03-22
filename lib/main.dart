@@ -1,25 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'theme_provider.dart';
 import 'login_screen.dart';
 
 void main() {
-  runApp(const FocusFlowApp());
+  runApp(
+    // 1. Wrap your entire app in the Provider so Dark Mode works everywhere
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const FocusFlowApp(),
+    ),
+  );
 }
 
-// 1. THE APP SETUP
+// 2. THE APP SETUP (Now listening to the ThemeProvider!)
 class FocusFlowApp extends StatelessWidget {
   const FocusFlowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    return Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+
+            // --- LIGHT AND DARK THEME SETTINGS ---
+            themeMode: themeProvider.themeMode,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              scaffoldBackgroundColor: const Color(0xFFF4F6F9),
+              primaryColor: Colors.blueAccent,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.black87,
+                elevation: 0,
+              ),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              primaryColor: Colors.blueAccent,
+              cardColor: const Color(0xFF1E1E1E),
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+              ),
+            ),
+
+            home: const SplashScreen(), // Keeps your awesome Splash Screen!
+          );
+        }
     );
   }
 }
 
-// 2. THE SPLASH SCREEN
+// 3. THE SPLASH SCREEN
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -42,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // Notice I removed 'backgroundColor: Colors.white' so it adapts to Dark Mode!
       body: Center(
         child: Lottie.asset(
           'assets/SplashLogo.json',
@@ -54,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// 3. THE ONBOARDING TUTORIAL
+// 4. THE ONBOARDING TUTORIAL
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -69,7 +106,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // Removed hardcoded white background here too!
       body: SafeArea(
         child: Column(
           children: [
@@ -142,7 +179,12 @@ class OnboardingPage extends StatelessWidget {
         children: [
           Icon(icon, size: 100, color: Colors.blueAccent),
           const SizedBox(height: 40),
-          Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          Text(
+              title,
+              // Removed hardcoded black text so it turns white in dark mode
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center
+          ),
           const SizedBox(height: 20),
           Text(description, style: const TextStyle(fontSize: 16, color: Colors.grey), textAlign: TextAlign.center),
         ],
