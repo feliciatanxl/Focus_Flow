@@ -8,13 +8,11 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to the Brain for Dark Mode!
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF4F6F9),
-      // Custom Back Button to match the theme
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -177,7 +175,6 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  // Helper to build modern text fields (Consistent with Login)
   Widget _buildTextField({required String hint, required IconData icon, required bool isDark, bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
@@ -197,7 +194,6 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  // Helper to build Social Tiles (Consistent with Login)
   Widget _buildSocialTile({required IconData icon, required String label, required bool isDark, required Color color}) {
     return Expanded(
       child: Container(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async'; // We need this to make the clock actually tick!
 
 class TimerScreen extends StatefulWidget {
-  final String? taskName; // We can pass a specific task to this screen!
+  final String? taskName;
 
   const TimerScreen({super.key, this.taskName});
 
@@ -11,13 +11,12 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
-  // 25 minutes = 1500 seconds
   static const int pomodoroDuration = 25 * 60;
   int _secondsRemaining = pomodoroDuration;
   Timer? _timer;
   bool _isRunning = false;
 
-  // The Course/Module selector
+
   String _selectedCourse = 'General Study';
   final List<String> _courses = [
     'General Study',
@@ -27,7 +26,6 @@ class _TimerScreenState extends State<TimerScreen> {
     'English Literature'
   ];
 
-  // Starts the clock
   void _startTimer() {
     if (_timer != null) _timer!.cancel();
     setState(() {
@@ -40,13 +38,11 @@ class _TimerScreenState extends State<TimerScreen> {
         } else {
           _timer!.cancel();
           _isRunning = false;
-          // When it hits 0, you could trigger an alarm or pop-up here!
         }
       });
     });
   }
 
-  // Pauses the clock
   void _pauseTimer() {
     _timer?.cancel();
     setState(() {
@@ -54,7 +50,6 @@ class _TimerScreenState extends State<TimerScreen> {
     });
   }
 
-  // Resets back to 25:00
   void _resetTimer() {
     _timer?.cancel();
     setState(() {
@@ -63,7 +58,6 @@ class _TimerScreenState extends State<TimerScreen> {
     });
   }
 
-  // Formats the seconds into standard MM:SS clock text
   String _formatTime(int seconds) {
     int minutes = seconds ~/ 60;
     int remainingSeconds = seconds % 60;
@@ -72,7 +66,7 @@ class _TimerScreenState extends State<TimerScreen> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // Always kill the timer when leaving the screen to save battery!
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -87,14 +81,13 @@ class _TimerScreenState extends State<TimerScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context), // Closes the timer
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // If they clicked a specific task, show it here!
             if (widget.taskName != null)
               Text(
                 widget.taskName!,
@@ -104,7 +97,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
             const SizedBox(height: 20),
 
-            // THE MODULE / COURSE DROP DOWN
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
@@ -133,7 +125,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
             const SizedBox(height: 60),
 
-            // THE GIANT CLOCK
             Center(
               child: Container(
                 width: 280,
@@ -160,7 +151,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
             const SizedBox(height: 60),
 
-            // THE CONTROLS (Play, Pause, Stop)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -173,7 +163,6 @@ class _TimerScreenState extends State<TimerScreen> {
                 ),
                 const SizedBox(width: 20),
 
-                // Play / Pause Button
                 FloatingActionButton.large(
                   backgroundColor: _isRunning ? Colors.orangeAccent : Colors.blueAccent,
                   foregroundColor: Colors.white,
@@ -182,14 +171,12 @@ class _TimerScreenState extends State<TimerScreen> {
                 ),
 
                 const SizedBox(width: 20),
-                // Stop/Finish Button
                 IconButton(
                   iconSize: 36,
                   color: Colors.grey,
                   icon: const Icon(Icons.stop_circle_outlined),
                   onPressed: () {
                     _pauseTimer();
-                    // Could show a "Session Saved!" message here
                   },
                 ),
               ],

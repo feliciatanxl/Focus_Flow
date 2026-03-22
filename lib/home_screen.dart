@@ -7,7 +7,6 @@ import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'timer_screen.dart';
 
-// 1. THE MASTER NAVIGATION SHELL
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -20,10 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const TodoListScreen(), // 0: Home
-    const CalendarScreen(), // 1: Calendar
-    const ScheduleScreen(), // 2: Schedule
-    const ProfileScreen(),  // 3: Profile
-    const SettingsScreen(), // 4: Settings
+    const ScheduleScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -34,13 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen to Dark Mode for the Bottom Nav Bar!
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       body: _pages[_selectedIndex],
 
-      // UPGRADED PREMIUM BOTTOM NAV BAR
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -68,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// 2. THE UPGRADED TO-DO LIST (Bento Style + Dark Mode)
+// 2. THE UPGRADED TO-DO LIST
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 

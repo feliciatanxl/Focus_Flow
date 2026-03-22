@@ -11,37 +11,32 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // We removed _isDarkMode from here because the Provider handles it now!
   bool _startWeekOnMonday = true;
   bool _hapticFeedback = true;
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to the Brain!
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDark = themeProvider.isDarkMode; // True if dark mode is on
+    final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
-      // 2. Remove the hardcoded background color so it uses the global theme!
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 3. Dynamic Text Color
               Text(
                 'Settings',
                 style: TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1,
-                  color: isDark ? Colors.white : Colors.black87, // Flips color!
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               const SizedBox(height: 30),
 
-              // Top Row: Full-width Dark Mode toggle
               _buildWideBentoToggle(
                 title: 'Dark Mode',
                 subtitle: 'Switch to a darker theme',
@@ -55,7 +50,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Middle Row: Two square blocks side-by-side
               Row(
                 children: [
                   Expanded(
@@ -81,7 +75,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Bottom Row: Actions
               Row(
                 children: [
                   Expanded(
@@ -121,13 +114,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87, // Flips color!
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white, // Dark box in dark mode
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
@@ -174,7 +167,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // --- WIDGET UPDATES (Notice the new 'isAppDark' variable passed in!) ---
 
   Widget _buildWideBentoToggle({required String title, required String subtitle, required IconData icon, required bool isActive, required bool isAppDark, required VoidCallback onTap}) {
     return GestureDetector(

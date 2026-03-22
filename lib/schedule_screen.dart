@@ -64,7 +64,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- 1. HEADER (Back to clean style) ---
+            // --- 1. HEADER  ---
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
               child: Row(
@@ -175,7 +175,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         children: [
           // THE MANUAL ADD BUTTON (+)
           FloatingActionButton(
-            heroTag: 'add_manual', // Unique tag to prevent errors
+            heroTag: 'add_manual',
             onPressed: () => _showAddClassDialog(isDark),
             backgroundColor: Colors.blueAccent,
             child: const Icon(Icons.add_rounded, size: 30, color: Colors.white),

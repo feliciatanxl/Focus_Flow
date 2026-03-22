@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // To listen to Dark Mode!
-import 'theme_provider.dart';            // Your app's brain
+import 'package:provider/provider.dart';
+import 'theme_provider.dart';
 import 'login_screen.dart';
 import 'edit_profile_screen.dart';
 
@@ -12,18 +12,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // State variables for the toggles
   bool _syncCalendar = true;
   bool _pushNotifications = true;
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to the ThemeProvider to know if Dark Mode is active
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
-      // Let the global theme handle the background color!
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
