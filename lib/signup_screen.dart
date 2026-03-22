@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart'; // This lets us jump back to HomeScreen!
+import 'home_screen.dart'; // <--- FIXED: This now correctly points to your new Home Screen file!
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
