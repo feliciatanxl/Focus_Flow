@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'calendar_screen.dart';
+import 'schedule_screen.dart';
+import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'timer_screen.dart';
 
 // 1. THE MASTER NAVIGATION SHELL
 class HomeScreen extends StatefulWidget {
@@ -9,19 +14,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // This number tracks which tab is currently highlighted (starts at 0 for Home)
   int _selectedIndex = 0;
 
-  // This is the "TV Guide" - a list of the 5 screens we can swap between
   final List<Widget> _pages = [
-    const TodoListScreen(), // 0: Home (Your beautiful To-Do List!)
-    const PlaceholderScreen(title: 'Calendar', icon: Icons.calendar_month), // 1: Calendar
-    const PlaceholderScreen(title: 'Schedule', icon: Icons.schedule),       // 2: Schedule
-    const PlaceholderScreen(title: 'Profile', icon: Icons.person),          // 3: Profile
-    const PlaceholderScreen(title: 'Settings', icon: Icons.settings),       // 4: Settings
+    const TodoListScreen(),
+    const CalendarScreen(),
+    const ScheduleScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
-  // This function runs every time you tap a button on the bottom bar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -31,16 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // The body swaps out the screen based on which tab you tapped
       body: _pages[_selectedIndex],
 
-      // The Bottom Navigation Bar itself
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // CRITICAL: Required if you have more than 3 tabs!
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blueAccent, // Color when tapped
-        unselectedItemColor: Colors.grey,     // Color when not tapped
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         elevation: 10,
         items: const [
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// 2. YOUR ORIGINAL TO-DO LIST (Now acting as Tab #0)
+
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
 
@@ -85,7 +85,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false, // Hides the back button just in case
+        automaticallyImplyLeading: false,
       ),
       body: ListView.builder(
         itemCount: _tasks.length,
@@ -95,6 +95,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
             child: ListTile(
               title: Text(_tasks[index]),
               leading: const Icon(Icons.circle_outlined, color: Colors.blueAccent),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TimerScreen(taskName: _tasks[index]),
+                  ),
+                );
+              },
             ),
           );
         },
@@ -126,42 +134,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
           );
         },
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-// 3. A DUMMY SCREEN FOR YOUR OTHER TABS
-// We use this so your app doesn't crash while you haven't built the other screens yet!
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  const PlaceholderScreen({super.key, required this.title, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 100, color: Colors.grey[300]),
-            const SizedBox(height: 20),
-            Text(
-              '$title Screen\nComing Soon!',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, color: Colors.grey),
-            ),
-          ],
-        ),
       ),
     );
   }
