@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
@@ -42,13 +43,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  Color _getColor(String colorName) {
+  // UPGRADED: Returns Neon colors in Dark Mode!
+  Color _getColor(String colorName, bool isDark) {
     switch (colorName) {
-      case 'blue': return Colors.blueAccent;
-      case 'orange': return Colors.orangeAccent;
-      case 'green': return Colors.green;
-      case 'purple': return Colors.deepPurpleAccent;
-      default: return Colors.blueGrey;
+      case 'blue': return isDark ? const Color(0xFF00E5FF) : Colors.blueAccent; // Cyber Cyan
+      case 'orange': return isDark ? const Color(0xFFFF9100) : Colors.orangeAccent; // Neon Orange
+      case 'green': return isDark ? const Color(0xFF00E676) : Colors.green; // Matrix Green
+      case 'purple': return isDark ? const Color(0xFFD500F9) : Colors.deepPurpleAccent; // Synthwave Purple
+      default: return isDark ? Colors.grey[400]! : Colors.blueGrey;
     }
   }
 
@@ -56,180 +58,299 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final primaryColor = isDark ? const Color(0xFF00E5FF) : Colors.blueAccent;
     final dailyClasses = _weeklySchedule[_selectedDayIndex] ?? [];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF4F6F9),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- 1. HEADER  ---
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'My Schedule',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.calendar_month_rounded, color: isDark ? Colors.white : Colors.black87),
-                  )
-                ],
+      backgroundColor: Colors.transparent, // Let the gradient show through
+      body: Stack(
+        children: [
+          // --- 1. THE TECH GRADIENT BACKGROUND ---
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
+                      : [const Color(0xFFF4F6F9), Colors.white, const Color(0xFFF4F6F9)],
+                ),
               ),
             ),
+          ),
 
-            // --- 2. DAY PICKER ---
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Row(
-                children: List.generate(_daysOfWeek.length, (index) {
-                  bool isSelected = _selectedDayIndex == index;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedDayIndex = index),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.blueAccent : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-                          borderRadius: BorderRadius.circular(24),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // --- 2. HEADER ---
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Timeline Matrix', // Tech rename
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
-                        child: Text(_daysOfWeek[index], style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.white : (isDark ? Colors.grey : Colors.black54))),
                       ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark ? primaryColor.withOpacity(0.1) : Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 10)] : [],
+                        ),
+                        child: Icon(Icons.schedule_rounded, color: isDark ? primaryColor : Colors.black87),
+                      )
+                    ],
+                  ),
+                ),
+
+                // --- 3. GLASS DAY PICKER ---
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  child: Row(
+                    children: List.generate(_daysOfWeek.length, (index) {
+                      bool isSelected = _selectedDayIndex == index;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedDayIndex = index),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? (isDark ? primaryColor.withOpacity(0.15) : Colors.blueAccent)
+                                      : (isDark ? Colors.white.withOpacity(0.03) : Colors.white),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? primaryColor
+                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.transparent),
+                                    width: isSelected && isDark ? 1.5 : 1,
+                                  ),
+                                ),
+                                child: Text(
+                                    _daysOfWeek[index],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isSelected
+                                          ? (isDark ? primaryColor : Colors.white)
+                                          : (isDark ? Colors.grey[500] : Colors.black54),
+                                      letterSpacing: 1,
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+
+                // --- 4. GLASS CLASS LIST ---
+                Expanded(
+                  child: dailyClasses.isEmpty
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.event_available_rounded, size: 80, color: isDark ? Colors.grey[800] : Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text('NO MODULES FOUND', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2, color: isDark ? Colors.grey[500] : Colors.grey[600])),
+                      ],
                     ),
-                  );
-                }),
-              ),
-            ),
+                  )
+                      : ListView.builder(
+                    padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0, bottom: 120.0), // Extra bottom padding for FABs
+                    itemCount: dailyClasses.length,
+                    itemBuilder: (context, index) {
+                      final course = dailyClasses[index];
+                      final cardColor = _getColor(course['color']!, isDark);
 
-            // --- 3. CLASS LIST ---
-            Expanded(
-              child: dailyClasses.isEmpty
-                  ? Center(child: Text('Free Day! Tap + to add a class.', style: TextStyle(color: isDark ? Colors.grey : Colors.black45)))
-                  : ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                itemCount: dailyClasses.length,
-                itemBuilder: (context, index) {
-                  final course = dailyClasses[index];
-                  final cardColor = _getColor(course['color']!);
-
-                  return GestureDetector(
-                    onLongPress: () {
-                      setState(() => _weeklySchedule[_selectedDayIndex]!.removeAt(index));
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 20.0),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(28),
-                        child: Row(
-                          children: [
-                            Container(width: 8, height: 110, color: cardColor),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                      return GestureDetector(
+                        onLongPress: () {
+                          setState(() => _weeklySchedule[_selectedDayIndex]!.removeAt(index));
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 20.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(28),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(28),
+                                  border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white, width: 1.5),
+                                ),
+                                child: Row(
                                   children: [
-                                    Text(course['course']!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
-                                    const SizedBox(height: 12),
-                                    Row(children: [Icon(Icons.access_time, size: 16, color: cardColor), const SizedBox(width: 8), Text(course['time']!, style: TextStyle(color: isDark ? Colors.grey : Colors.black54))]),
+                                    // Neon Colored Accent Bar
+                                    Container(
+                                      width: 8,
+                                      height: 110,
+                                      decoration: BoxDecoration(
+                                        color: cardColor,
+                                        boxShadow: isDark ? [BoxShadow(color: cardColor, blurRadius: 10)] : [],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                course['course']!,
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: isDark ? Colors.white : Colors.black87)
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Row(
+                                                children: [
+                                                  Icon(Icons.access_time_rounded, size: 16, color: cardColor),
+                                                  const SizedBox(width: 8),
+                                                  Text(course['time']!, style: TextStyle(color: isDark ? Colors.grey[400] : Colors.black54, fontWeight: FontWeight.w500))
+                                                ]
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                                children: [
+                                                  Icon(Icons.location_on_rounded, size: 16, color: cardColor),
+                                                  const SizedBox(width: 8),
+                                                  Text(course['room']!, style: TextStyle(color: isDark ? Colors.grey[400] : Colors.black54, fontWeight: FontWeight.w500))
+                                                ]
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
 
-      // --- 4. GROUPED FLOATING BUTTONS ---
+      // --- 5. GROUPED NEON FLOATING BUTTONS ---
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // THE MANUAL ADD BUTTON (+)
+          // MANUAL ADD BUTTON (+)
           FloatingActionButton(
             heroTag: 'add_manual',
-            onPressed: () => _showAddClassDialog(isDark),
-            backgroundColor: Colors.blueAccent,
-            child: const Icon(Icons.add_rounded, size: 30, color: Colors.white),
+            onPressed: () => _showAddClassDialog(isDark, primaryColor),
+            backgroundColor: isDark ? const Color(0xFF1E1E1E) : primaryColor,
+            foregroundColor: isDark ? primaryColor : Colors.white,
+            elevation: isDark ? 10 : 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: isDark ? BorderSide(color: primaryColor, width: 1.5) : BorderSide.none,
+            ),
+            child: const Icon(Icons.add_rounded, size: 30),
           ),
           const SizedBox(height: 12),
-          // THE SYLLABUS UPLOAD BUTTON
+
+          // SYLLABUS UPLOAD BUTTON
           FloatingActionButton.extended(
             heroTag: 'upload_syllabus',
             onPressed: () {},
-            backgroundColor: Colors.deepPurpleAccent,
-            icon: const Icon(Icons.document_scanner_rounded, color: Colors.white),
-            label: const Text('Upload PDF', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFD500F9), // Cyber Purple
+            foregroundColor: isDark ? const Color(0xFFD500F9) : Colors.white,
+            elevation: isDark ? 10 : 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: isDark ? const BorderSide(color: Color(0xFFD500F9), width: 1.5) : BorderSide.none,
+            ),
+            icon: const Icon(Icons.document_scanner_rounded),
+            label: const Text('Upload PDF', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
           ),
         ],
       ),
     );
   }
 
-  void _showAddClassDialog(bool isDark) {
+  // --- FUTURISTIC ADD CLASS DIALOG ---
+  void _showAddClassDialog(bool isDark, Color primaryColor) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: Text('Add New Class', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+        backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+          side: isDark ? BorderSide(color: primaryColor.withOpacity(0.5)) : BorderSide.none,
+        ),
+        title: Text('Insert Module', style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildField(_courseController, 'Course Name', Icons.book, isDark),
-            _buildField(_timeController, 'Time', Icons.timer, isDark),
-            _buildField(_roomController, 'Room Number', Icons.room, isDark),
+            _buildField(_courseController, 'Module Name', Icons.book_rounded, isDark, primaryColor),
+            _buildField(_timeController, 'Time (10AM-12PM)', Icons.timer_rounded, isDark, primaryColor),
+            _buildField(_roomController, 'Location', Icons.room_rounded, isDark, primaryColor),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(onPressed: _addClassManually, style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent), child: const Text('Add', style: TextStyle(color: Colors.white))),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel', style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey))
+          ),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? Colors.transparent : primaryColor,
+                foregroundColor: isDark ? primaryColor : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: isDark ? BorderSide(color: primaryColor) : BorderSide.none,
+                ),
+              ),
+              onPressed: _addClassManually,
+              child: const Text('Execute', style: TextStyle(fontWeight: FontWeight.bold))
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildField(TextEditingController controller, String hint, IconData icon, bool isDark) {
+  Widget _buildField(TextEditingController controller, String hint, IconData icon, bool isDark, Color primaryColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: controller,
         style: TextStyle(color: isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.blueAccent),
+          prefixIcon: Icon(icon, color: isDark ? primaryColor : Colors.blueAccent),
           hintText: hint,
-          hintStyle: const TextStyle(color: Colors.grey),
+          hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey),
           filled: true,
-          fillColor: isDark ? Colors.black26 : Colors.grey[100],
+          fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: primaryColor, width: 1.5)
+          ),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme_provider.dart';
@@ -9,173 +10,222 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to the Brain for Dark Mode!
+    // Listen to the Brain for Dark Mode!
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF4F6F9),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 60),
-
-              // --- HEADER SECTION ---
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(Icons.auto_awesome_rounded, size: 40, color: Colors.blueAccent),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Welcome Back',
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1,
-                  color: isDark ? Colors.white : Colors.black87,
+      body: Stack(
+        children: [
+          // --- 1. THE TECH GRADIENT BACKGROUND ---
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
+                      : [Colors.white, const Color(0xFFF0F4F8), Colors.white],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Sign in to continue your focus journey.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 40),
+            ),
+          ),
 
-              // --- INPUT BENTO CARD ---
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    _buildTextField(
-                      hint: 'Email Address',
-                      icon: Icons.email_rounded,
-                      isDark: isDark,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      hint: 'Password',
-                      icon: Icons.lock_rounded,
-                      isDark: isDark,
-                      isPassword: true,
-                    ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text('Forgot Password?', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // LOGIN BUTTON
-                    SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          elevation: 0,
-                        ),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          );
-                        },
-                        child: const Text('Log In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // --- SOCIAL LOGIN SECTION ---
-              Center(
-                child: Text(
-                  'Or continue with',
-                  style: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey[400], fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSocialTile(
-                    icon: Icons.g_mobiledata_rounded,
-                    label: 'Google',
-                    isDark: isDark,
-                    color: Colors.redAccent,
+                  const SizedBox(height: 60),
+
+                  // --- 2. HEADER SECTION (Cyber Security Vibe) ---
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF00E5FF).withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: isDark ? [
+                        BoxShadow(color: const Color(0xFF00E5FF).withOpacity(0.2), blurRadius: 20)
+                      ] : [],
+                    ),
+                    child: Icon(
+                        Icons.fingerprint_rounded,
+                        size: 40,
+                        color: isDark ? const Color(0xFF00E5FF) : Colors.black
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  _buildSocialTile(
-                    icon: Icons.apple_rounded,
-                    label: 'Apple',
-                    isDark: isDark,
-                    color: isDark ? Colors.white : Colors.black,
+                  const SizedBox(height: 24),
+                  Text(
+                    'System Login',
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Authenticate to access your workspace.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // --- 3. GLASSMORPHIC INPUT PANEL ---
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildTextField(
+                              hint: 'Email Address',
+                              icon: Icons.alternate_email_rounded,
+                              isDark: isDark,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildTextField(
+                              hint: 'Password',
+                              icon: Icons.password_rounded,
+                              isDark: isDark,
+                              isPassword: true,
+                            ),
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                    'Forgot Password?',
+                                    style: TextStyle(
+                                        color: isDark ? const Color(0xFF00E5FF) : Colors.black87,
+                                        fontWeight: FontWeight.bold
+                                    )
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            // --- NEON LOGIN BUTTON ---
+                            SizedBox(
+                              width: double.infinity,
+                              height: 60,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isDark ? Colors.transparent : Colors.black,
+                                  foregroundColor: isDark ? const Color(0xFF00E5FF) : Colors.white,
+                                  shadowColor: isDark ? const Color(0xFF00E5FF).withOpacity(0.5) : Colors.black26,
+                                  elevation: isDark ? 10 : 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    side: isDark ? const BorderSide(color: Color(0xFF00E5FF), width: 1.5) : BorderSide.none,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                                  );
+                                },
+                                child: const Text(
+                                    '[ Authenticate ]',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // --- 4. GLASS SOCIAL LOGIN SECTION ---
+                  Center(
+                    child: Text(
+                      'Or connect via external provider',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[500] : Colors.grey[400],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      _buildSocialTile(
+                        icon: Icons.g_mobiledata_rounded,
+                        label: 'Google',
+                        isDark: isDark,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(width: 16),
+                      _buildSocialTile(
+                        icon: Icons.apple_rounded,
+                        label: 'Apple',
+                        isDark: isDark,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // --- 5. FOOTER ---
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          text: "No access token? ",
+                          style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                          children: [
+                            TextSpan(
+                              text: 'Initialize Account',
+                              style: TextStyle(
+                                  color: isDark ? const Color(0xFF00E5FF) : Colors.black,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
-
-              const SizedBox(height: 40),
-
-              // --- FOOTER ---
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                    );
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Don't have an account? ",
-                      style: TextStyle(color: isDark ? Colors.grey : Colors.grey[600]),
-                      children: const [
-                        TextSpan(
-                          text: 'Sign Up',
-                          style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // Helper to build modern text fields
+  // --- HELPER: MODERN GLASS TEXT FIELDS ---
   Widget _buildTextField({required String hint, required IconData icon, required bool isDark, bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
@@ -183,44 +233,58 @@ class LoginScreen extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey[400]),
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        prefixIcon: Icon(icon, color: isDark ? const Color(0xFF00E5FF) : Colors.black54),
         filled: true,
-        fillColor: isDark ? Colors.black26 : Colors.grey[100],
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
+        ),
+        // Glow effect when the user clicks the text field
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+              color: isDark ? const Color(0xFF00E5FF).withOpacity(0.5) : Colors.black,
+              width: 1.5
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 20),
       ),
     );
   }
 
-  // Helper to build Social Login Tiles
+  // --- HELPER: GLASS SOCIAL TILES ---
   Widget _buildSocialTile({required IconData icon, required String label, required bool isDark, required Color color}) {
     return Expanded(
-      child: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
-        ),
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 30),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200),
+            ),
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: color, size: 30),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
