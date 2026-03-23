@@ -11,7 +11,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // 1. Controllers to handle user input
   late TextEditingController _nameController;
   late TextEditingController _majorController;
   late TextEditingController _bioController;
@@ -19,9 +18,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Pre-filling with current data
-    _nameController = TextEditingController(text: 'Alex Student');
-    _majorController = TextEditingController(text: 'Level 12 Scholar | CS Branch');
+    _nameController = TextEditingController(text: 'ALEX STUDENT');
+    _majorController = TextEditingController(text: 'LVL 12 SCHOLAR • CS BRANCH');
     _bioController = TextEditingController(text: 'Compiling success. Aiming for 100% execution this semester. 🚀');
   }
 
@@ -36,115 +34,98 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
-    final primaryColor = isDark ? const Color(0xFF00E5FF) : Colors.blueAccent;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Let the gradient flow behind the AppBar
-      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.close_rounded, color: isDark ? Colors.white : Colors.black87, size: 28),
+          icon: Icon(Icons.close_rounded, color: accentColor, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Node Configuration', // Tech rename
+          'NODE CONFIGURATION',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: accentColor,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            letterSpacing: 2,
           ),
         ),
         actions: [
           // COMMIT BUTTON
-          TextButton(
-            onPressed: () {
-              // Show futuristic SnackBar
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Configuration committed successfully.', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
-                  backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.black87,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: isDark ? BorderSide(color: primaryColor, width: 1.5) : BorderSide.none,
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('CONFIGURATION COMMITTED',
+                        style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2, fontSize: 10)),
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
+                );
+                Navigator.pop(context);
+              },
+              child: Text(
+                'COMMIT',
+                style: TextStyle(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  letterSpacing: 2,
                 ),
-              );
-              Navigator.pop(context);
-            },
-            child: Text(
-              '[ Commit ]',
-              style: TextStyle(
-                color: primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                letterSpacing: 1,
               ),
             ),
           ),
-          const SizedBox(width: 10),
         ],
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // --- 1. THE TECH GRADIENT BACKGROUND ---
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [const Color(0xFFF4F6F9), Colors.white, const Color(0xFFF4F6F9)],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
 
-                  // --- 2. NEON PROFILE PICTURE EDIT ---
+                  // --- 2. PROFILE PICTURE EDIT ---
                   Center(
                     child: Stack(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: primaryColor.withOpacity(0.5), width: 3),
-                            boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 20)] : [],
+                            border: Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 2),
                           ),
                           child: CircleAvatar(
                             radius: 60,
-                            backgroundColor: isDark ? const Color(0xFF1E1E1E) : primaryColor,
-                            child: Icon(Icons.person, size: 60, color: isDark ? primaryColor : Colors.white),
+                            backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                            child: Icon(Icons.person, size: 60, color: accentColor),
                           ),
                         ),
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: GestureDetector(
-                            onTap: () {
-                              // Image Picker logic
-                            },
+                            onTap: () {},
                             child: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF1E1E1E) : primaryColor,
+                                color: accentColor,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: isDark ? primaryColor : Colors.white, width: 2),
-                                boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.5), blurRadius: 8)] : [],
+                                border: Border.all(color: isDark ? Colors.black : Colors.white, width: 2),
                               ),
-                              child: Icon(Icons.camera_alt_rounded, color: isDark ? primaryColor : Colors.white, size: 20),
+                              child: Icon(Icons.camera_alt_rounded,
+                                  color: isDark ? Colors.black : Colors.white, size: 18),
                             ),
                           ),
                         ),
@@ -152,9 +133,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 50),
 
-                  // --- 3. GLASSMORPHIC INPUT BENTO CARD ---
+                  // --- 3. GLASSMORPHIC INPUT CARD ---
                   ClipRRect(
                     borderRadius: BorderRadius.circular(32),
                     child: BackdropFilter(
@@ -162,34 +143,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.1 : 0.05), blurRadius: 20, offset: const Offset(0, 10)),
-                          ],
+                          border: Border.all(
+                              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                              width: 1.5
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel('System Alias', isDark),
-                            _buildField(_nameController, 'e.g. Alex Student', Icons.badge_rounded, isDark, primaryColor),
+                            _buildLabel('SYSTEM ALIAS', isDark, accentColor),
+                            _buildField(_nameController, 'ALIAS', isDark, accentColor),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 24),
 
-                            _buildLabel('Primary Branch', isDark),
-                            _buildField(_majorController, 'e.g. Computer Science', Icons.account_tree_rounded, isDark, primaryColor),
+                            _buildLabel('PRIMARY BRANCH', isDark, accentColor),
+                            _buildField(_majorController, 'BRANCH', isDark, accentColor),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 24),
 
-                            _buildLabel('Runtime Directives (Bio)', isDark),
+                            _buildLabel('RUNTIME DIRECTIVES', isDark, accentColor),
                             _buildField(
                                 _bioController,
-                                'Enter your goals...',
-                                Icons.terminal_rounded,
+                                'BIO_DATA',
                                 isDark,
-                                primaryColor,
-                                maxLines: 3
+                                accentColor,
+                                maxLines: 4
                             ),
                           ],
                         ),
@@ -197,19 +177,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
 
                   // --- 4. DANGER ZONE ---
-                  TextButton(
-                    onPressed: () {
-                      // Logic to delete account
-                    },
+                  GestureDetector(
+                    onTap: () {},
                     child: Text(
-                      'Purge Node Data', // Tech rename
+                      'PURGE NODE DATA',
                       style: TextStyle(
-                          color: isDark ? Colors.redAccent : Colors.red[700],
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                          letterSpacing: 2
                       ),
                     ),
                   ),
@@ -223,48 +202,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // --- HELPER: TEXT LABELS ---
-  Widget _buildLabel(String text, bool isDark) {
+  // --- HELPERS ---
+  Widget _buildLabel(String text, bool isDark, Color accent) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-          color: isDark ? Colors.grey[500] : Colors.grey[600],
+          letterSpacing: 2,
+          color: isDark ? Colors.white38 : Colors.black38,
         ),
       ),
     );
   }
 
-  // --- HELPER: MODERN GLASS TEXT FIELDS ---
-  Widget _buildField(TextEditingController controller, String hint, IconData icon, bool isDark, Color primaryColor, {int maxLines = 1}) {
+  Widget _buildField(TextEditingController controller, String hint, bool isDark, Color accent, {int maxLines = 1}) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+      style: TextStyle(color: accent, fontSize: 14, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey[400]),
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(bottom: maxLines > 1 ? 45 : 0),
-          child: Icon(icon, color: isDark ? primaryColor : Colors.blueAccent),
-        ),
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
-        // Glow effect when the user clicks the text field
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-              color: isDark ? primaryColor.withOpacity(0.5) : Colors.black,
-              width: 1.5
-          ),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black26, width: 1),
         ),
         contentPadding: const EdgeInsets.all(20),
       ),

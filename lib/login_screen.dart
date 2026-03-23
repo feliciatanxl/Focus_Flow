@@ -10,28 +10,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Listen to the Brain for Dark Mode!
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDark = themeProvider.isDarkMode;
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       body: Stack(
         children: [
-          // --- 1. THE TECH GRADIENT BACKGROUND ---
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [Colors.white, const Color(0xFFF0F4F8), Colors.white],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -40,131 +25,125 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 60),
 
-                  // --- 2. HEADER SECTION (Cyber Security Vibe) ---
+                  // --- 1. HEADER SECTION ---
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF00E5FF).withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                      border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: isDark ? [
-                        BoxShadow(color: const Color(0xFF00E5FF).withOpacity(0.2), blurRadius: 20)
-                      ] : [],
                     ),
                     child: Icon(
                         Icons.fingerprint_rounded,
                         size: 40,
-                        color: isDark ? const Color(0xFF00E5FF) : Colors.black
+                        color: accentColor
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'System Login',
+                    'SYSTEM_AUTH',
                     style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w900,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: -1,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: accentColor,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Authenticate to access your workspace.',
+                    'Provide credentials to access the workspace.',
                     style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 40),
 
-                  // --- 3. GLASSMORPHIC INPUT PANEL ---
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildTextField(
-                              hint: 'Email Address',
-                              icon: Icons.alternate_email_rounded,
-                              isDark: isDark,
-                            ),
-                            const SizedBox(height: 16),
-                            _buildTextField(
-                              hint: 'Password',
-                              icon: Icons.password_rounded,
-                              isDark: isDark,
-                              isPassword: true,
-                            ),
-                            const SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(
-                                        color: isDark ? const Color(0xFF00E5FF) : Colors.black87,
-                                        fontWeight: FontWeight.bold
-                                    )
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-
-                            // --- NEON LOGIN BUTTON ---
-                            SizedBox(
-                              width: double.infinity,
-                              height: 60,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark ? Colors.transparent : Colors.black,
-                                  foregroundColor: isDark ? const Color(0xFF00E5FF) : Colors.white,
-                                  shadowColor: isDark ? const Color(0xFF00E5FF).withOpacity(0.5) : Colors.black26,
-                                  elevation: isDark ? 10 : 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    side: isDark ? const BorderSide(color: Color(0xFF00E5FF), width: 1.5) : BorderSide.none,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const HomeScreen()),
-                                  );
-                                },
-                                child: const Text(
-                                    '[ Authenticate ]',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                  // --- 2. MONOCHROME INPUT PANEL ---
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                        width: 1.5,
                       ),
                     ),
+                    child: Column(
+                      children: [
+                        _buildTextField(
+                          hint: 'EMAIL_ADDRESS',
+                          icon: Icons.alternate_email_rounded,
+                          isDark: isDark,
+                          accentColor: accentColor,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          hint: 'PASSWORD_HASH',
+                          icon: Icons.lock_outline_rounded,
+                          isDark: isDark,
+                          accentColor: accentColor,
+                          isPassword: true,
+                        ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(
+                                'FORGOT_PASS?',
+                                style: TextStyle(
+                                    color: isDark ? Colors.white54 : Colors.black54,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1
+                                )
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // --- SOLID AUTHENTICATE BUTTON ---
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: accentColor,
+                              foregroundColor: isDark ? Colors.black : Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                              );
+                            },
+                            child: const Text(
+                                'AUTHENTICATE',
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2)
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                   const SizedBox(height: 40),
 
-                  // --- 4. GLASS SOCIAL LOGIN SECTION ---
+                  // --- 3. EXTERNAL PROVIDERS ---
                   Center(
                     child: Text(
-                      'Or connect via external provider',
+                      'EXTERNAL_LINK_REQUIRED?',
                       style: TextStyle(
-                        color: isDark ? Colors.grey[500] : Colors.grey[400],
+                        color: isDark ? Colors.white24 : Colors.black26,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        letterSpacing: 0.5,
+                        fontSize: 10,
+                        letterSpacing: 2,
                       ),
                     ),
                   ),
@@ -173,23 +152,23 @@ class LoginScreen extends StatelessWidget {
                     children: [
                       _buildSocialTile(
                         icon: Icons.g_mobiledata_rounded,
-                        label: 'Google',
+                        label: 'GOOGLE',
                         isDark: isDark,
-                        color: Colors.redAccent,
+                        accentColor: accentColor,
                       ),
                       const SizedBox(width: 16),
                       _buildSocialTile(
                         icon: Icons.apple_rounded,
-                        label: 'Apple',
+                        label: 'APPLE',
                         isDark: isDark,
-                        color: isDark ? Colors.white : Colors.black,
+                        accentColor: accentColor,
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 50),
 
-                  // --- 5. FOOTER ---
+                  // --- 4. FOOTER ---
                   Center(
                     child: TextButton(
                       onPressed: () {
@@ -200,13 +179,13 @@ class LoginScreen extends StatelessWidget {
                       },
                       child: RichText(
                         text: TextSpan(
-                          text: "No access token? ",
-                          style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                          text: "NO_ACCESS_TOKEN? ",
+                          style: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 11, letterSpacing: 1),
                           children: [
                             TextSpan(
-                              text: 'Initialize Account',
+                              text: 'INITIALIZE_ACCOUNT',
                               style: TextStyle(
-                                  color: isDark ? const Color(0xFF00E5FF) : Colors.black,
+                                  color: accentColor,
                                   fontWeight: FontWeight.bold
                               ),
                             ),
@@ -215,7 +194,6 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -225,66 +203,56 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // --- HELPER: MODERN GLASS TEXT FIELDS ---
-  Widget _buildTextField({required String hint, required IconData icon, required bool isDark, bool isPassword = false}) {
+  Widget _buildTextField({required String hint, required IconData icon, required bool isDark, required Color accentColor, bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
-      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+      style: TextStyle(color: accentColor, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey[400]),
-        prefixIcon: Icon(icon, color: isDark ? const Color(0xFF00E5FF) : Colors.black54),
+        hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, letterSpacing: 1),
+        prefixIcon: Icon(icon, color: isDark ? Colors.white38 : Colors.black38, size: 20),
         filled: true,
-        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
-        // Glow effect when the user clicks the text field
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-              color: isDark ? const Color(0xFF00E5FF).withOpacity(0.5) : Colors.black,
-              width: 1.5
-          ),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black26, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 20),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18),
       ),
     );
   }
 
-  // --- HELPER: GLASS SOCIAL TILES ---
-  Widget _buildSocialTile({required IconData icon, required String label, required bool isDark, required Color color}) {
+  Widget _buildSocialTile({required IconData icon, required String label, required bool isDark, required Color accentColor}) {
     return Expanded(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200),
-            ),
-            child: InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: color, size: 30),
-                  const SizedBox(width: 8),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                ],
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+          color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+        ),
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: accentColor, size: 24),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  letterSpacing: 1,
+                  color: accentColor,
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

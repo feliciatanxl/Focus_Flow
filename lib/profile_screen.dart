@@ -20,24 +20,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
-    final primaryColor = isDark ? const Color(0xFF00E5FF) : Colors.blueAccent;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Let the gradient show through
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // --- 1. THE TECH GRADIENT BACKGROUND ---
+          // --- 1. MONOCHROME BACKGROUND ---
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [const Color(0xFFF4F6F9), Colors.white, const Color(0xFFF4F6F9)],
-                ),
-              ),
+              color: isDark ? Colors.black : const Color(0xFFF5F5F5),
             ),
           ),
 
@@ -47,27 +39,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // --- 2. SLEEK HEADER ---
+                  // --- 2. HEADER ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'User Node', // Tech rename
+                        'NODE',
                         style: TextStyle(
                           fontSize: 34,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           letterSpacing: -1,
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: accentColor,
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isDark ? primaryColor.withOpacity(0.1) : Colors.white,
+                          border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                           shape: BoxShape.circle,
-                          boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 10)] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
                         ),
-                        child: Icon(Icons.hub_rounded, color: isDark ? primaryColor : Colors.black87),
+                        child: Icon(Icons.hub_rounded, color: accentColor, size: 24),
                       )
                     ],
                   ),
@@ -82,61 +73,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
                           borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.1 : 0.05), blurRadius: 20, offset: const Offset(0, 10)),
-                          ],
+                          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05), width: 1.5),
                         ),
                         child: Column(
                           children: [
-                            // Neon Profile Picture
+                            // Monochrome Profile Picture
                             Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: primaryColor.withOpacity(0.5), width: 3),
-                                boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.3), blurRadius: 20)] : [],
+                                border: Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 2),
                               ),
                               child: CircleAvatar(
                                 radius: 50,
-                                backgroundColor: isDark ? const Color(0xFF1E1E1E) : primaryColor,
-                                child: Icon(Icons.person, size: 50, color: isDark ? primaryColor : Colors.white),
+                                backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                                child: Icon(Icons.person, size: 50, color: accentColor),
                               ),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Alex Student',
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
+                              'ALEX STUDENT',
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 1, color: accentColor),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Level 12 Scholar | CS Branch', // Gamified/Tech subtitle
-                              style: TextStyle(fontSize: 16, color: isDark ? primaryColor : Colors.grey[600], fontWeight: FontWeight.w600),
+                              'LVL 12 SCHOLAR • CS BRANCH',
+                              style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54, fontWeight: FontWeight.bold, letterSpacing: 2),
                             ),
-                            const SizedBox(height: 20),
-                            // Hollow Neon Edit Button
+                            const SizedBox(height: 24),
+                            // Hollow Monochrome Button
                             SizedBox(
                               width: double.infinity,
-                              height: 45,
-                              child: ElevatedButton(
+                              height: 48,
+                              child: OutlinedButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => const EditProfileScreen()),
                                   );
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark ? Colors.transparent : Colors.blue[50],
-                                  foregroundColor: primaryColor,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    side: isDark ? BorderSide(color: primaryColor, width: 1.5) : BorderSide.none,
-                                  ),
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: accentColor, width: 1.5),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
-                                child: const Text('[ Modify Config ]', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                child: Text(
+                                    'MODIFY CONFIG',
+                                    style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 2)
+                                ),
                               ),
                             ),
                           ],
@@ -146,25 +131,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // --- 4. GAMIFICATION STATS (Glass Bento) ---
+                  // --- 4. BENTO STATS (Monochrome) ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStatBox('Directives', '142', Icons.task_alt_rounded, isDark ? const Color(0xFF00E676) : Colors.green, isDark),
+                      _buildStatBox('DIRECTIVES', '142', Icons.task_alt_rounded, isDark, accentColor),
                       const SizedBox(width: 12),
-                      _buildStatBox('Uptime', '14d', Icons.local_fire_department_rounded, isDark ? const Color(0xFFFF9100) : Colors.orange, isDark),
+                      _buildStatBox('UPTIME', '14D', Icons.local_fire_department_rounded, isDark, accentColor),
                       const SizedBox(width: 12),
-                      _buildStatBox('Focus (hr)', '56', Icons.memory_rounded, primaryColor, isDark),
+                      _buildStatBox('FOCUS', '56H', Icons.memory_rounded, isDark, accentColor),
                     ],
                   ),
                   const SizedBox(height: 32),
 
-                  // --- 5. SYSTEM PREFERENCES (Glass List) ---
+                  // --- 5. SYSTEM PREFERENCES ---
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'System Preferences',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87, letterSpacing: 0.5),
+                      'PREFERENCES',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: accentColor, letterSpacing: 2),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -174,37 +159,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.1 : 0.03), blurRadius: 10, offset: const Offset(0, 4)),
-                          ],
+                          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05), width: 1.5),
                         ),
                         child: Column(
                           children: [
                             SwitchListTile(
-                              activeColor: primaryColor,
-                              title: Text('External Sync', style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
-                              subtitle: Text('Google & Apple nodes', style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey)),
-                              secondary: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: primaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                                child: Icon(Icons.sync_rounded, color: primaryColor),
-                              ),
+                              activeColor: accentColor,
+                              title: Text('EXTERNAL SYNC', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: accentColor)),
+                              subtitle: Text('GOOGLE / APPLE NODES', style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38)),
+                              secondary: Icon(Icons.sync_rounded, color: accentColor, size: 20),
                               value: _syncCalendar,
                               onChanged: (bool value) => setState(() => _syncCalendar = value),
                             ),
-                            Divider(height: 1, indent: 70, endIndent: 20, color: isDark ? Colors.white10 : Colors.grey[200]),
+                            Divider(height: 1, indent: 70, endIndent: 20, color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                             SwitchListTile(
-                              activeColor: isDark ? const Color(0xFFD500F9) : Colors.purpleAccent,
-                              title: Text('System Alerts', style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black87)),
-                              subtitle: Text('Class & deadline overrides', style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey)),
-                              secondary: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: (isDark ? const Color(0xFFD500F9) : Colors.purpleAccent).withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                                child: Icon(Icons.notifications_active_rounded, color: isDark ? const Color(0xFFD500F9) : Colors.purpleAccent),
-                              ),
+                              activeColor: accentColor,
+                              title: Text('SYSTEM ALERTS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: accentColor)),
+                              subtitle: Text('PUSH NOTIFICATIONS', style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38)),
+                              secondary: Icon(Icons.notifications_none_rounded, color: accentColor, size: 20),
                               value: _pushNotifications,
                               onChanged: (bool value) => setState(() => _pushNotifications = value),
                             ),
@@ -215,45 +189,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // --- 6. TERMINATE SESSION BUTTON ---
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.redAccent.withOpacity(0.05) : Colors.red[50],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.redAccent.withOpacity(isDark ? 0.5 : 0.3), width: 1.5),
+                  // --- 6. TERMINATE SESSION ---
+                  GestureDetector(
+                    onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white : Colors.black,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.power_settings_new_rounded, color: isDark ? Colors.black : Colors.white, size: 20),
+                          const SizedBox(width: 12),
+                          Text(
+                            'TERMINATE SESSION',
+                            style: TextStyle(
+                                color: isDark ? Colors.black : Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2
+                            ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.power_settings_new_rounded, color: Colors.redAccent),
-                              const SizedBox(width: 8),
-                              Text(
-                                '[ Terminate Session ]',
-                                style: TextStyle(
-                                    color: isDark ? Colors.redAccent : Colors.red[700],
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 100), // Padding for bottom nav
+                  const SizedBox(height: 120),
                 ],
               ),
             ),
@@ -263,50 +227,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // --- CUSTOM WIDGET: The Glass Bento Stat Boxes ---
-  Widget _buildStatBox(String title, String count, IconData icon, Color color, bool isDark) {
+  Widget _buildStatBox(String title, String count, IconData icon, bool isDark, Color accent) {
     return Expanded(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white, width: 1.5),
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(isDark ? 0.1 : 0.03), blurRadius: 10, offset: const Offset(0, 4)),
-              ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05), width: 1.5),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: accent, size: 24),
+            const SizedBox(height: 12),
+            Text(
+              count,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: accent),
             ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                    boxShadow: isDark ? [BoxShadow(color: color.withOpacity(0.2), blurRadius: 10)] : [],
-                  ),
-                  child: Icon(icon, color: color, size: 28),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  count,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600], fontWeight: FontWeight.w600, letterSpacing: 0.5),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold, letterSpacing: 1),
+              textAlign: TextAlign.center,
             ),
-          ),
+          ],
         ),
       ),
     );

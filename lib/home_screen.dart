@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  // --- RESTORED TIMER TO THE MAIN PAGE LIST ---
   final List<Widget> _pages = [
     const TodoListScreen(),
     const ScheduleScreen(),
@@ -37,32 +38,40 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
-      extendBody: true, // Allows the body gradient to flow BEHIND the nav bar
+      extendBody: true,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       body: _pages[_selectedIndex],
 
-      // --- GLASSMORPHIC BOTTOM NAV BAR ---
+      // --- MONOCHROME GLASS NAV BAR ---
       bottomNavigationBar: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF09090B).withOpacity(0.7) : Colors.white.withOpacity(0.8),
-              border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))),
+              color: isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.8),
+              border: Border(
+                top: BorderSide(
+                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1),
+                  width: 0.5,
+                ),
+              ),
             ),
             child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
+              type: BottomNavigationBarType.fixed, // Essential for 6 items
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
-              selectedItemColor: isDark ? const Color(0xFF00E5FF) : Colors.blueAccent,
-              unselectedItemColor: isDark ? Colors.grey[600] : Colors.grey[400],
-              backgroundColor: Colors.transparent, // Handled by container above
+              selectedItemColor: isDark ? Colors.white : Colors.black,
+              unselectedItemColor: isDark ? Colors.white30 : Colors.black26,
+              backgroundColor: Colors.transparent,
               elevation: 0,
+              selectedFontSize: 9, // Smaller font to fit 6 items
+              unselectedFontSize: 9,
               items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Hub'),
-                BottomNavigationBarItem(icon: Icon(Icons.schedule_rounded), label: 'Schedule'),
-                BottomNavigationBarItem(icon: Icon(Icons.calendar_month_rounded), label: 'Calendar'),
-                BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Node'),
-                BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Config'),
+                BottomNavigationBarItem(icon: Icon(Icons.grid_view_rounded, size: 20), label: 'HUB'),
+                BottomNavigationBarItem(icon: Icon(Icons.terminal_rounded, size: 20), label: 'MATRIX'),
+                BottomNavigationBarItem(icon: Icon(Icons.blur_on_rounded, size: 20), label: 'TIME'),
+                BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined, size: 20), label: 'NODE'),
+                BottomNavigationBarItem(icon: Icon(Icons.tune_rounded, size: 20), label: 'CONFIG'),
               ],
             ),
           ),
@@ -73,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // -------------------------------------------------------------------------
-// 2. THE FUTURISTIC HUB (To-Do List + Dashboard)
+// THE MONOCHROME HUB (Dashboard)
 // -------------------------------------------------------------------------
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
@@ -86,6 +95,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   final List<Map<String, dynamic>> _tasks = [
     {'name': 'Compile Chapter 4 Notes', 'isDone': false},
     {'name': 'Execute Math Algorithms', 'isDone': false},
+    {'name': 'System Optimization', 'isDone': true},
   ];
 
   final TextEditingController _textController = TextEditingController();
@@ -99,42 +109,21 @@ class _TodoListScreenState extends State<TodoListScreen> {
     }
   }
 
-  void _toggleTask(int index) {
-    setState(() {
-      _tasks[index]['isDone'] = !_tasks[index]['isDone'];
-    });
-  }
-
-  void _deleteTask(int index) {
-    setState(() {
-      _tasks.removeAt(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
-    final primaryColor = isDark ? const Color(0xFF00E5FF) : Colors.blueAccent;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
-    // Calculate progress for the XP Bar
-    int completedTasks = _tasks.where((task) => task['isDone'] == true).length;
+    int completedTasks = _tasks.where((t) => t['isDone']).length;
     double progress = _tasks.isEmpty ? 0.0 : completedTasks / _tasks.length;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // --- 1. THE TECH GRADIENT BACKGROUND ---
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [const Color(0xFFF4F6F9), Colors.white, const Color(0xFFF4F6F9)],
-                ),
-              ),
+              color: isDark ? Colors.black : const Color(0xFFF5F5F5),
             ),
           ),
 
@@ -142,7 +131,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- 2. HEADER & XP BAR ---
+                // --- HEADER ---
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                   child: Column(
@@ -155,178 +144,73 @@ class _TodoListScreenState extends State<TodoListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'SYSTEM USER: ALEX',
+                                'OPERATOR: ALEX',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                  fontSize: 10,
+                                  color: isDark ? Colors.white38 : Colors.black38,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
+                                  letterSpacing: 2,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Active Directives',
+                                'Directives',
                                 style: TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -1,
-                                  color: isDark ? Colors.white : Colors.black87,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: accentColor,
                                 ),
                               ),
                             ],
                           ),
-                          // Tech Date Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: isDark ? primaryColor.withOpacity(0.1) : Colors.blue[50],
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: isDark ? primaryColor.withOpacity(0.3) : Colors.transparent),
-                              boxShadow: isDark ? [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 10)] : [],
-                            ),
-                            child: Column(
-                              children: [
-                                Text('OCT', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 12)),
-                                Text('24', style: TextStyle(color: primaryColor, fontWeight: FontWeight.w900, fontSize: 20)),
-                              ],
-                            ),
-                          )
+                          _buildDateBadge(isDark, accentColor),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 30),
 
-                      // GAMIFIED XP BAR
+                      // XP BAR
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Lvl 12 Scholar', style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.bold)),
-                          Text('${(progress * 100).toInt()}% to Level 13', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                          Text('LVL 12 SCHOLAR', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1, color: accentColor)),
+                          Text('${(progress * 100).toInt()}% COMPLETED', style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54)),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 8,
-                          backgroundColor: isDark ? Colors.white10 : Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      Container(
+                        height: 2,
+                        width: double.infinity,
+                        color: isDark ? Colors.white10 : Colors.black12,
+                        child: FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: progress,
+                          child: Container(color: accentColor),
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                // --- 3. BENTO DASHBOARD STATS ---
+                // --- STATS ---
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
                   child: Row(
                     children: [
-                      _buildBentoStat('Pending', '${_tasks.length - completedTasks}', Icons.hourglass_empty_rounded, isDark, primaryColor),
+                      _buildStat('PENDING', '${_tasks.length - completedTasks}', isDark, accentColor),
                       const SizedBox(width: 12),
-                      _buildBentoStat('Streak', '14', Icons.local_fire_department_rounded, isDark, Colors.orangeAccent),
+                      _buildStat('STREAK', '14', isDark, accentColor),
                     ],
                   ),
                 ),
 
-                // --- 4. THE GLASSMORPHIC TASK LIST ---
+                // --- TASK LIST ---
                 Expanded(
-                  child: _tasks.isEmpty
-                      ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.task_alt_rounded, size: 80, color: isDark ? Colors.grey[800] : Colors.grey[300]),
-                        const SizedBox(height: 16),
-                        Text('QUEUE EMPTY', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2, color: isDark ? Colors.grey[500] : Colors.grey[600])),
-                      ],
-                    ),
-                  )
-                      : ListView.builder(
-                    padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 100), // Bottom padding for FAB and Nav
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                     itemCount: _tasks.length,
                     itemBuilder: (context, index) {
                       final task = _tasks[index];
-                      final isDone = task['isDone'];
-
-                      return Dismissible(
-                        key: Key(task['name'] + index.toString()),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          _deleteTask(index);
-                        },
-                        background: Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: const Icon(Icons.delete_sweep_rounded, color: Colors.white, size: 30),
-                        ),
-
-                        // GLASS TASK CARD
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => TimerScreen(taskName: task['name'])));
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(24),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: isDone
-                                        ? Colors.green.withOpacity(0.5)
-                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.white),
-                                    width: isDone ? 2 : 1.5,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                                  leading: GestureDetector(
-                                    onTap: () => _toggleTask(index),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 200),
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: isDone ? Colors.green : (isDark ? Colors.white10 : Colors.blue[50]),
-                                        shape: BoxShape.circle,
-                                        boxShadow: isDone && isDark ? [BoxShadow(color: Colors.green.withOpacity(0.5), blurRadius: 10)] : [],
-                                      ),
-                                      child: Icon(
-                                        isDone ? Icons.check_rounded : Icons.circle_outlined,
-                                        color: isDone ? Colors.white : primaryColor,
-                                        size: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    task['name'],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: isDone ? FontWeight.normal : FontWeight.bold,
-                                      decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
-                                      color: isDone ? Colors.grey[600] : (isDark ? Colors.white : Colors.black87),
-                                    ),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.play_circle_fill_rounded,
-                                    color: isDone ? Colors.transparent : (isDark ? primaryColor.withOpacity(0.5) : Colors.grey[300]),
-                                    size: 32,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                      return _buildTaskCard(task, index, isDark, accentColor);
                     },
                   ),
                 ),
@@ -336,24 +220,59 @@ class _TodoListScreenState extends State<TodoListScreen> {
         ],
       ),
 
-      // --- 5. NEON FLOATING ACTION BUTTON ---
       floatingActionButton: FloatingActionButton(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : primaryColor,
-        foregroundColor: isDark ? primaryColor : Colors.white,
-        elevation: isDark ? 10 : 6,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: isDark ? BorderSide(color: primaryColor, width: 1.5) : BorderSide.none,
-        ),
-        onPressed: () => _showAddTaskDialog(isDark, primaryColor),
-        child: const Icon(Icons.add_rounded, size: 32),
+        backgroundColor: isDark ? Colors.white : Colors.black,
+        foregroundColor: isDark ? Colors.black : Colors.white,
+        elevation: 0,
+        shape: const CircleBorder(),
+        onPressed: () => _showAddTaskDialog(isDark, accentColor),
+        child: const Icon(Icons.add, size: 30),
       ),
     );
   }
 
-  // Helper for Bento Stats
-  Widget _buildBentoStat(String title, String value, IconData icon, bool isDark, Color color) {
+  // --- HELPERS ---
+
+  Widget _buildDateBadge(bool isDark, Color accent) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text('MAR', style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54, fontWeight: FontWeight.bold)),
+          Text('23', style: TextStyle(fontSize: 18, color: accent, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStat(String label, String value, bool isDark, Color accent) {
     return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: accent)),
+            Text(label, style: TextStyle(fontSize: 9, letterSpacing: 1, color: isDark ? Colors.white38 : Colors.black38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(Map<String, dynamic> task, int index, bool isDark, Color accent) {
+    bool isDone = task['isDone'];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
@@ -361,25 +280,44 @@ class _TodoListScreenState extends State<TodoListScreen> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white),
+              border: Border.all(
+                color: isDone ? Colors.transparent : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+              ),
             ),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
-                  child: Icon(icon, color: color, size: 20),
+                GestureDetector(
+                  onTap: () => setState(() => task['isDone'] = !isDone),
+                  child: Container(
+                    height: 24, width: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: isDone ? Colors.transparent : accent, width: 2),
+                      color: isDone ? accent : Colors.transparent,
+                    ),
+                    child: isDone ? Icon(Icons.check, size: 16, color: isDark ? Colors.black : Colors.white) : null,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-                    Text(title, style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[500] : Colors.grey[600])),
-                  ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: InkWell(
+                    // Tap text to open Timer Screen
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => TimerScreen(taskName: task['name'])));
+                    },
+                    child: Text(
+                      task['name'],
+                      style: TextStyle(
+                        color: isDone ? (isDark ? Colors.white24 : Colors.black26) : accent,
+                        decoration: isDone ? TextDecoration.lineThrough : null,
+                        fontWeight: isDone ? FontWeight.normal : FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
+                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: isDark ? Colors.white12 : Colors.black12),
               ],
             ),
           ),
@@ -388,53 +326,28 @@ class _TodoListScreenState extends State<TodoListScreen> {
     );
   }
 
-  // Futuristic Dialog Box
-  void _showAddTaskDialog(bool isDark, Color primaryColor) {
+  void _showAddTaskDialog(bool isDark, Color accent) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-            side: isDark ? BorderSide(color: primaryColor.withOpacity(0.5)) : BorderSide.none,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: isDark ? Colors.white10 : Colors.transparent)),
+        title: Text('NEW DIRECTIVE', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1, color: accent)),
+        content: TextField(
+          controller: _textController,
+          autofocus: true,
+          style: TextStyle(color: accent),
+          decoration: InputDecoration(
+            hintText: 'Input task...',
+            hintStyle: const TextStyle(color: Colors.white24),
+            border: UnderlineInputBorder(borderSide: BorderSide(color: accent)),
           ),
-          title: Text('New Directive', style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-          content: TextField(
-            controller: _textController,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-            decoration: InputDecoration(
-              hintText: "e.g., Debug algorithm",
-              hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey),
-              filled: true,
-              fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: primaryColor)),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.transparent : primaryColor,
-                foregroundColor: isDark ? primaryColor : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: isDark ? BorderSide(color: primaryColor) : BorderSide.none,
-                ),
-              ),
-              onPressed: () {
-                _addTask();
-                Navigator.pop(context);
-              },
-              child: const Text('Execute', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('ABORT', style: TextStyle(color: isDark ? Colors.white38 : Colors.black38))),
+          TextButton(onPressed: () { _addTask(); Navigator.pop(context); }, child: Text('CONFIRM', style: TextStyle(color: accent, fontWeight: FontWeight.bold))),
+        ],
+      ),
     );
   }
 }

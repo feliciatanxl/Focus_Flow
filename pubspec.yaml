@@ -45,6 +45,7 @@ dependencies:
   firebase_core: ^4.5.0
   image_picker: ^1.2.1
   crypto: ^3.0.7
+  supabase_flutter: ^2.6.0
 
 dev_dependencies:
   flutter_test:

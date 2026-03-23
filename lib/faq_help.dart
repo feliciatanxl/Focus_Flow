@@ -14,46 +14,31 @@ class _HelpFAQScreenState extends State<HelpFAQScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
-    final primaryColor = isDark ? const Color(0xFF00E5FF) : Colors.blueAccent;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Let the gradient flow behind the AppBar
-      backgroundColor: Colors.transparent, // Required for gradient stack
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,
-              color: isDark ? Colors.white : Colors.black87, size: 20),
+              color: accentColor, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Knowledge Base', // Tech rename
+          'KNOWLEDGE_BASE',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: accentColor,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            letterSpacing: 2,
           ),
         ),
       ),
       body: Stack(
-        fit: StackFit.expand, // Prevents black void at the bottom
+        fit: StackFit.expand,
         children: [
-          // --- 1. THE TECH GRADIENT BACKGROUND ---
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [const Color(0xFFF4F6F9), Colors.white, const Color(0xFFF4F6F9)],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -62,154 +47,122 @@ class _HelpFAQScreenState extends State<HelpFAQScreen> {
                 children: [
                   const SizedBox(height: 20),
 
-                  // --- 2. GLASSMORPHIC SEARCH BAR ---
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(isDark ? 0.1 : 0.05), blurRadius: 10),
-                          ],
-                        ),
-                        child: TextField(
-                          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-                          decoration: InputDecoration(
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Icon(Icons.search_rounded, color: isDark ? primaryColor : Colors.blueAccent),
-                            ),
-                            hintText: 'Query documentation...',
-                            hintStyle: TextStyle(color: isDark ? Colors.grey[600] : Colors.grey[400]),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                        ),
+                  // --- 2. MONOCHROME SEARCH BAR ---
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+                    ),
+                    child: TextField(
+                      style: TextStyle(color: accentColor, fontSize: 14),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.search_rounded, color: accentColor, size: 20),
+                        hintText: 'QUERY_DATABASE...',
+                        hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, letterSpacing: 1),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 32),
 
-                  // --- 3. FAQ CATEGORIES (Glass Panels) ---
-                  _buildSectionTitle('Core Operations', isDark, primaryColor),
+                  // --- 3. FAQ SECTIONS ---
+                  _buildSectionTitle('CORE_OPERATIONS', isDark, accentColor),
                   _buildFAQTile(
                     'What is FocusFlow?',
-                    'FocusFlow is an all-in-one productivity hub designed specifically for students to manage tasks, schedules, and study sessions.',
+                    'FocusFlow is a high-performance productivity matrix designed for academic optimization and schedule management.',
                     isDark,
-                    primaryColor,
+                    accentColor,
                   ),
                   _buildFAQTile(
-                    'Is my data synced across devices?',
-                    'Currently, data is stored locally. Cloud sync via Firebase is coming in the next update!',
+                    'Is data synced?',
+                    'Current version operates on local storage protocols. Cloud synchronization is scheduled for the next system update.',
                     isDark,
-                    primaryColor,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  _buildSectionTitle('Execution Modules', isDark, primaryColor),
-                  _buildFAQTile(
-                    'What is the Pomodoro technique?',
-                    'It’s a time management method that uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks.',
-                    isDark,
-                    primaryColor,
-                  ),
-                  _buildFAQTile(
-                    'Can I customize break times?',
-                    'Yes! You can adjust the work and break durations within the Timer settings config.',
-                    isDark,
-                    primaryColor,
+                    accentColor,
                   ),
 
                   const SizedBox(height: 24),
 
-                  _buildSectionTitle('Timeline Synchronization', isDark, primaryColor),
+                  _buildSectionTitle('EXECUTION_MODULES', isDark, accentColor),
                   _buildFAQTile(
-                    'How do I add a new module?',
-                    'Go to the Schedule tab and tap the "+" node at the bottom right to manually enter your class details.',
+                    'Pomodoro Technique?',
+                    'A time-boxing methodology using 25-minute focus intervals separated by short-duration recovery cycles.',
                     isDark,
-                    primaryColor,
+                    accentColor,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  _buildSectionTitle('TIMELINE_SYNC', isDark, accentColor),
+                  _buildFAQTile(
+                    'Adding new nodes?',
+                    'Navigate to the MATRIX tab and initialize the [+] node to manually input schedule data.',
+                    isDark,
+                    accentColor,
                   ),
                   _buildFAQTile(
-                    'How does the Syllabus Upload work?',
-                    'You can upload a PDF of your syllabus, and our AI will attempt to extract dates and times to populate your schedule automatically.',
+                    'Syllabus AI Upload?',
+                    'Upload a PDF manifest; the AI parser will extract timestamps and module names to populate your timeline.',
                     isDark,
-                    primaryColor,
+                    accentColor,
                   ),
 
                   const SizedBox(height: 40),
 
-                  // --- 4. CONTACT SUPPORT CARD (Neon Glass) ---
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: isDark ? primaryColor.withOpacity(0.05) : primaryColor,
-                          borderRadius: BorderRadius.circular(28),
-                          border: Border.all(
-                              color: isDark ? primaryColor.withOpacity(0.5) : Colors.transparent,
-                              width: 1.5
+                  // --- 4. CONTACT SUPPORT CARD (High Contrast) ---
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'UNRESOLVED_EXCEPTION?',
+                          style: TextStyle(
+                              color: isDark ? Colors.black : Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1
                           ),
-                          boxShadow: isDark ? [
-                            BoxShadow(color: primaryColor.withOpacity(0.1), blurRadius: 20)
-                          ] : [
-                            BoxShadow(color: primaryColor.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))
-                          ],
                         ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Unresolved Exception?', // Tech rename
-                              style: TextStyle(
-                                  color: isDark ? Colors.white : Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Our engineering team is ready to assist you with any system issues.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: isDark ? Colors.grey[400] : Colors.white70,
-                                  fontSize: 14
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark ? Colors.transparent : Colors.white,
-                                  foregroundColor: isDark ? primaryColor : primaryColor,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    side: isDark ? BorderSide(color: primaryColor, width: 1.5) : BorderSide.none,
-                                  ),
-                                ),
-                                child: const Text(
-                                    '[ Open Support Ticket ]',
-                                    style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)
-                                ),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 8),
+                        Text(
+                          'Engineering support is available for manual system overrides and bug reporting.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: isDark ? Colors.black54 : Colors.white54,
+                              fontSize: 12,
+                              height: 1.4
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDark ? Colors.black : Colors.white,
+                              foregroundColor: isDark ? Colors.white : Colors.black,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                                'OPEN_SUPPORT_TICKET',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 1)
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 60),
                 ],
               ),
             ),
@@ -219,61 +172,55 @@ class _HelpFAQScreenState extends State<HelpFAQScreen> {
     );
   }
 
-  // --- HELPER: TECH SECTION TITLES ---
-  Widget _buildSectionTitle(String title, bool isDark, Color primaryColor) {
+  Widget _buildSectionTitle(String title, bool isDark, Color accent) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 12),
+      padding: const EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1.5,
-          color: isDark ? primaryColor : Colors.blue[900],
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+          color: isDark ? Colors.white38 : Colors.black38,
         ),
       ),
     );
   }
 
-  // --- HELPER: GLASS FAQ TILES ---
-  Widget _buildFAQTile(String question, String answer, bool isDark, Color primaryColor) {
+  Widget _buildFAQTile(String question, String answer, bool isDark, Color accent) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.white, width: 1.5),
-            ),
-            child: Theme(
-              // Removes the weird borders ExpansionTile adds by default
-              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                iconColor: primaryColor,
-                collapsedIconColor: isDark ? Colors.grey[500] : Colors.grey,
-                title: Text(
-                  question,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Text(
-                      answer,
-                      style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], height: 1.5),
-                    ),
-                  ),
-                ],
-              ),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          iconColor: accent,
+          collapsedIconColor: isDark ? Colors.white24 : Colors.black26,
+          title: Text(
+            question,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: accent,
             ),
           ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Text(
+                answer,
+                style: TextStyle(
+                    color: isDark ? Colors.white54 : Colors.black54,
+                    fontSize: 13,
+                    height: 1.5
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
