@@ -56,11 +56,11 @@ Make sure you have [Flutter](https://docs.flutter.dev/get-started/install) insta
 ## Project Structure
 lib/
 
-┣ main.dart # App entry point & theme setup
-┣ login_screen.dart # User authentication UI
-┣ signup_screen.dart # New user registration UI
-┣ home_screen.dart # Main navigation & to-do list
-┣ calendar_screen.dart # Calendar (table_calendar integration)
-┣ schedule_screen.dart # Weekly timetable UI
-┣ timer_screen.dart # Pomodoro focus mode logic
+┣ main.dart # App entry point & theme setup  
+┣ login_screen.dart # User authentication UI    
+┣ signup_screen.dart # New user registration UI    
+┣ home_screen.dart # Main navigation & to-do list     
+┣ calendar_screen.dart # Calendar (table_calendar integration)    
+┣ schedule_screen.dart # Weekly timetable UI    
+┣ timer_screen.dart # Pomodoro focus mode logic    
 ┗ profile_screen.dart # User stats, rewards & settings
