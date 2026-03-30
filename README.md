@@ -18,11 +18,15 @@ Students are constantly juggling lectures, assignments, and personal events, but
 * **[IN DEVELOPMENT] AI-Powered Timetables:** Users will be able to upload a PDF syllabus, utilizing AI parsing to automatically extract and populate their weekly timetable.
 * **[IN DEVELOPMENT] Universal Calendar Sync:** Native API integration to establish a two-way sync with Google Calendar and Apple Calendar.
 
-## 📱 Screen Previews
-*(Note: Replace these placeholder links with actual screenshot URLs once uploaded to your repository!)*
-| Home / Tasks | Focus Timer | Class Schedule | Profile & Stats |
-| :---: | :---: | :---: | :---: |
-| <img src="placeholder_link_1.png" width="200"> | <img src="placeholder_link_2.png" width="200"> | <img src="placeholder_link_3.png" width="200"> | <img src="placeholder_link_4.png" width="200"> |
+[//]: # (## 📱 Screen Previews)
+
+[//]: # (*&#40;Note: Replace these placeholder links with actual screenshot URLs once uploaded to your repository!&#41;*)
+
+[//]: # (| Home / Tasks | Focus Timer | Class Schedule | Profile & Stats |)
+
+[//]: # (| :---: | :---: | :---: | :---: |)
+
+[//]: # (| <img src="placeholder_link_1.png" width="200"> | <img src="placeholder_link_2.png" width="200"> | <img src="placeholder_link_3.png" width="200"> | <img src="placeholder_link_4.png" width="200"> |)
 
 ## 🛠️ Tech Stack
 * **Frontend:** Flutter, Dart
@@ -53,17 +57,10 @@ Make sure you have [Flutter](https://docs.flutter.dev/get-started/install) insta
 lib/
 
 ┣ main.dart # App entry point & theme setup
-
 ┣ login_screen.dart # User authentication UI
-
 ┣ signup_screen.dart # New user registration UI
-
 ┣ home_screen.dart # Main navigation & to-do list
-
 ┣ calendar_screen.dart # Calendar (table_calendar integration)
-
 ┣ schedule_screen.dart # Weekly timetable UI
-
 ┣ timer_screen.dart # Pomodoro focus mode logic
-
 ┗ profile_screen.dart # User stats, rewards & settings
