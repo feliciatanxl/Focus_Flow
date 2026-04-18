@@ -2,10 +2,25 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme_provider.dart';
 import 'login_screen.dart';
 
-void main() {
+Future<void> main() async {
+  // 1. Ensure Flutter bindings are ready
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Load the secret keys from your .env file
+  await dotenv.load(fileName: ".env");
+
+  // 3. Initialize Supabase BEFORE running the app
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  // 4. Run the app
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
@@ -24,21 +39,21 @@ class FocusFlowApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             themeMode: themeProvider.themeMode,
-            // --- NEO-LIGHT THEME ---
+            // --- FROST THEME (Light) ---
             theme: ThemeData(
               useMaterial3: true,
               brightness: Brightness.light,
-              scaffoldBackgroundColor: const Color(0xFFF4F6F9),
-              primaryColor: const Color(0xFF00E5FF), // Cyber Cyan
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00E5FF)),
+              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+              primaryColor: Colors.black,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.black, brightness: Brightness.light),
             ),
-            // --- FUTURISTIC DARK THEME (The main attraction) ---
+            // --- OBSIDIAN THEME (Dark) ---
             darkTheme: ThemeData(
               useMaterial3: true,
               brightness: Brightness.dark,
-              scaffoldBackgroundColor: const Color(0xFF09090B), // Deep Vercel Black
-              primaryColor: const Color(0xFF00E5FF), // Cyber Cyan
-              cardColor: const Color(0xFF18181B),
+              scaffoldBackgroundColor: Colors.black,
+              primaryColor: Colors.white,
+              cardColor: const Color(0xFF121212),
             ),
             home: const SplashScreen(),
           );
@@ -48,7 +63,7 @@ class FocusFlowApp extends StatelessWidget {
 }
 
 // -------------------------------------------------------------------------
-// 3. THE SPLASH SCREEN (Tech Boot Sequence)
+// 3. THE SPLASH SCREEN (Monochrome Boot Sequence)
 // -------------------------------------------------------------------------
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -78,8 +93,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: Colors.white, // Keeps your white-BG logo seamless
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,12 +109,12 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 40),
-            // Coding nod: Terminal-style loading text
-            const Text(
+            // Terminal-style loading text
+            Text(
               'INITIALIZING_WORKSPACE...',
               style: TextStyle(
-                fontFamily: 'Courier', // Standard monospace fallback
-                color: Colors.grey,
+                fontFamily: 'Courier',
+                color: isDark ? Colors.white54 : Colors.black54,
                 letterSpacing: 2,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -106,8 +124,8 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(
               width: 150,
               child: LinearProgressIndicator(
-                backgroundColor: Colors.grey[200],
-                color: const Color(0xFF00E5FF), // Cyber Cyan
+                backgroundColor: isDark ? Colors.white10 : Colors.black12,
+                color: accentColor,
                 minHeight: 2,
               ),
             ),
@@ -119,7 +137,7 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 // -------------------------------------------------------------------------
-// 4. THE ONBOARDING TUTORIAL (Futuristic Glassmorphism)
+// 4. THE ONBOARDING TUTORIAL (Monochrome UI)
 // -------------------------------------------------------------------------
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -135,29 +153,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F5F5),
       body: Stack(
         children: [
-          // Background Tech Gradient
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [const Color(0xFF09090B), const Color(0xFF13131A), const Color(0xFF09090B)]
-                      : [Colors.white, const Color(0xFFF0F4F8), Colors.white],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: Column(
               children: [
-                // Tech-styled Skip Button
+                // Minimal Skip Button
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
@@ -165,11 +170,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: TextButton(
                       onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
                       child: Text(
-                          '< Skip >',
+                          '< SKIP >',
                           style: TextStyle(
-                            color: isDark ? Colors.grey[500] : Colors.grey[600],
+                            color: isDark ? Colors.white38 : Colors.black38,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
+                            letterSpacing: 2,
+                            fontSize: 12,
                           )
                       ),
                     ),
@@ -182,47 +188,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPageChanged: (index) => setState(() => _currentPage = index),
                     children: const [
                       OnboardingPage(
-                          icon: Icons.memory_rounded, // Tech icon
-                          title: 'Initialize Hub',
+                          icon: Icons.grid_view_rounded,
+                          title: 'INITIALIZE_HUB',
                           description: 'Your centralized workspace for academic deployment and daily tasks.'
                       ),
                       OnboardingPage(
-                          icon: Icons.radar_rounded, // Radar/Scanner icon
-                          title: 'Deep Focus Mode',
+                          icon: Icons.timer_outlined,
+                          title: 'DEEP_FOCUS_MODE',
                           description: 'Engage course-specific timers to maximize cognitive output.'
                       ),
                       OnboardingPage(
-                          icon: Icons.terminal_rounded, // Terminal icon
-                          title: 'Execute Goals',
+                          icon: Icons.terminal_rounded,
+                          title: 'EXECUTE_GOALS',
                           description: 'Track your streaks, compile your tasks, and build your future.'
                       ),
                     ],
                   ),
                 ),
 
-                // Futuristic Dot Indicator (Glowing)
+                // Solid Dot Indicator
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(3, (index) => _buildDot(index, context, isDark)),
+                  children: List.generate(3, (index) => _buildDot(index, isDark, accentColor)),
                 ),
 
                 const SizedBox(height: 40),
 
-                // Neon Main Action Button
+                // Solid Main Action Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 60,
+                    height: 56,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? Colors.transparent : Colors.black,
-                        foregroundColor: isDark ? const Color(0xFF00E5FF) : Colors.white,
-                        shadowColor: isDark ? const Color(0xFF00E5FF).withOpacity(0.5) : Colors.black26,
-                        elevation: isDark ? 10 : 0, // Glow effect
+                        backgroundColor: accentColor,
+                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: isDark ? const BorderSide(color: Color(0xFF00E5FF), width: 1.5) : BorderSide.none,
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: () {
@@ -233,8 +237,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }
                       },
                       child: Text(
-                          _currentPage == 2 ? '[ Deploy Workspace ]' : 'Next ==>',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)
+                          _currentPage == 2 ? 'DEPLOY_WORKSPACE' : 'NEXT_SEQUENCE',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2)
                       ),
                     ),
                   ),
@@ -248,7 +252,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildDot(int index, BuildContext context, bool isDark) {
+  Widget _buildDot(int index, bool isDark, Color accentColor) {
     bool isActive = _currentPage == index;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -256,13 +260,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       width: isActive ? 24 : 8,
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        color: isActive
-            ? (isDark ? const Color(0xFF00E5FF) : Colors.black)
-            : Colors.grey.withOpacity(0.3),
+        color: isActive ? accentColor : (isDark ? Colors.white24 : Colors.black26),
         borderRadius: BorderRadius.circular(10),
-        boxShadow: isActive && isDark ? [
-          const BoxShadow(color: Color(0xFF00E5FF), blurRadius: 8, spreadRadius: 1)
-        ] : [], // Neon glow on active dot
       ),
     );
   }
@@ -278,6 +277,7 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? Colors.white : Colors.black;
 
     return Padding(
       padding: const EdgeInsets.all(30.0),
@@ -285,14 +285,14 @@ class OnboardingPage extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15), // GLASSMORPHISM BLUR
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
             child: Container(
               padding: const EdgeInsets.all(40),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.03) : Colors.white.withOpacity(0.6),
+                color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+                  color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
                   width: 1.5,
                 ),
               ),
@@ -300,33 +300,36 @@ class OnboardingPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Glowing Icon Container
+                  // Monochrome Icon Container
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF00E5FF).withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
                       shape: BoxShape.circle,
-                      boxShadow: isDark ? [
-                        BoxShadow(color: const Color(0xFF00E5FF).withOpacity(0.2), blurRadius: 30)
-                      ] : [],
+                      border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                     ),
-                    child: Icon(icon, size: 80, color: isDark ? const Color(0xFF00E5FF) : Colors.black),
+                    child: Icon(icon, size: 80, color: accentColor),
                   ),
                   const SizedBox(height: 50),
                   Text(
                       title,
                       style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black87,
-                          letterSpacing: -0.5
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: accentColor,
+                          letterSpacing: 1
                       ),
                       textAlign: TextAlign.center
                   ),
                   const SizedBox(height: 16),
                   Text(
                       description,
-                      style: TextStyle(fontSize: 15, color: isDark ? Colors.grey[400] : Colors.grey[700], height: 1.6),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                          height: 1.6,
+                          letterSpacing: 0.5
+                      ),
                       textAlign: TextAlign.center
                   ),
                 ],
