@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // REQUIRED for Google Auth call
 import 'theme_provider.dart';
 import 'home_screen.dart';
 import 'auth_service.dart'; // IMPORTANT: This links your database!
@@ -78,6 +79,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  // 4. NEW: Google OAuth Execution Function
+  Future<void> _handleGoogleSignUp() async {
+    try {
+      setState(() => _isLoading = true);
+
+      // Triggers the browser-based OAuth flow (Handles both Sign Up and Login)
+      await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: 'io.supabase.flutter://callback',
+      );
+
+      print("Google Sign-Up initiated...");
+    } catch (e) {
+      print("Google Auth Error: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('GOOGLE_AUTH_FAILURE: Could not initiate sign-up.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
@@ -136,7 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Column(
                       children: [
                         _buildTextField(
-                          controller: _nameController, // LINKED!
+                          controller: _nameController,
                           hint: 'FULL_NAME',
                           icon: Icons.badge_outlined,
                           isDark: isDark,
@@ -144,7 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 16),
                         _buildTextField(
-                          controller: _emailController, // LINKED!
+                          controller: _emailController,
                           hint: 'EMAIL_ADDRESS',
                           icon: Icons.alternate_email_rounded,
                           isDark: isDark,
@@ -152,7 +177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 16),
                         _buildTextField(
-                          controller: _passwordController, // LINKED!
+                          controller: _passwordController,
                           hint: 'ACCESS_KEY_HASH',
                           icon: Icons.lock_outline_rounded,
                           isDark: isDark,
@@ -161,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 30),
 
-                        // --- SOLID INITIALIZE BUTTON (Now with loading state) ---
+                        // --- SOLID INITIALIZE BUTTON ---
                         SizedBox(
                           width: double.infinity,
                           height: 56,
@@ -172,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               elevation: 0,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            onPressed: _isLoading ? null : _handleSignUp, // TRIGGERS DATABASE!
+                            onPressed: _isLoading ? null : _handleSignUp,
                             child: _isLoading
                                 ? SizedBox(
                                 height: 20, width: 20,
@@ -197,9 +222,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      _buildSocialTile(icon: Icons.g_mobiledata_rounded, label: 'GOOGLE', isDark: isDark, accentColor: accentColor),
-                      const SizedBox(width: 16),
-                      _buildSocialTile(icon: Icons.apple_rounded, label: 'APPLE', isDark: isDark, accentColor: accentColor),
+                      // UPDATED: Apple removed, Google handler added
+                      _buildSocialTile(
+                        icon: Icons.g_mobiledata_rounded,
+                        label: 'GOOGLE',
+                        isDark: isDark,
+                        accentColor: accentColor,
+                        onTap: _handleGoogleSignUp,
+                      ),
                     ],
                   ),
 
@@ -230,10 +260,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Notice we added 'required TextEditingController controller' here
+  // Required TextEditingController added here
   Widget _buildTextField({required TextEditingController controller, required String hint, required IconData icon, required bool isDark, required Color accentColor, bool isPassword = false}) {
     return TextField(
-      controller: controller, // And linked it here!
+      controller: controller,
       obscureText: isPassword,
       style: TextStyle(color: accentColor, fontSize: 14),
       decoration: InputDecoration(
@@ -249,7 +279,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildSocialTile({required IconData icon, required String label, required bool isDark, required Color accentColor}) {
+  // UPDATED: Now accepts an optional VoidCallback parameter for onTap
+  Widget _buildSocialTile({
+    required IconData icon,
+    required String label,
+    required bool isDark,
+    required Color accentColor,
+    VoidCallback? onTap,
+  }) {
     return Expanded(
       child: Container(
         height: 56,
@@ -259,7 +296,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
         ),
         child: InkWell(
-          onTap: () {},
+          onTap: onTap, // Connected the callback here
           borderRadius: BorderRadius.circular(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
